@@ -1,6 +1,6 @@
 package com.speccy.speccy.application.converter;
 
-import com.speccy.speccy.domain.workspace.model.TargetDatabaseStatus;
+import com.speccy.speccy.domain.environment.model.TargetDatabaseStatus;
 import jakarta.persistence.Converter;
 
 @Converter(autoApply = false)

@@ -2,6 +2,7 @@ package com.speccy.speccy.domain.execution.model;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -38,6 +39,11 @@ public class TestResult {
     @Column(name = "passed", nullable = false)
     private Boolean passed = false;
 
+    @NotNull
+    @Enumerated(jakarta.persistence.EnumType.STRING)
+    @Column(name = "execution_status", nullable = false, length = 20)
+    private ExecutionStatus executionStatus = ExecutionStatus.FAILED;
+
     @Column(name = "actual_status")
     private Integer actualStatus;
 
@@ -56,6 +62,9 @@ public class TestResult {
     @Column(name = "failure_reason", columnDefinition = "TEXT")
     private String failureReason;
 
+    @Column(name = "error_detail", columnDefinition = "TEXT")
+    private String errorDetail;
+
     @Column(name = "duration_ms")
     private Integer durationMs;
 
@@ -68,21 +77,25 @@ public class TestResult {
 
     public void complete(
             boolean passed,
+            ExecutionStatus executionStatus,
             Integer actualStatus,
             String actualResponseJson,
             String dbVerifyActual,
             Boolean dbVerifyPassed,
             String extractedVarsJson,
             String failureReason,
+            String errorDetail,
             Integer durationMs
     ) {
         this.passed = passed;
+        this.executionStatus = executionStatus;
         this.actualStatus = actualStatus;
         this.actualResponseJson = actualResponseJson;
         this.dbVerifyActual = dbVerifyActual;
         this.dbVerifyPassed = dbVerifyPassed;
         this.extractedVarsJson = extractedVarsJson;
         this.failureReason = failureReason;
+        this.errorDetail = errorDetail;
         this.durationMs = durationMs;
     }
 }

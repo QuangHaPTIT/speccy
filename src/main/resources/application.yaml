@@ -1,3 +1,33 @@
 spring:
-  application:
-    name: speccy
+  datasource:
+    url: jdbc:mysql://${MYSQL_DB_SERVER_ADDRESS:localhost}:${MYSQL_DB_SERVER_PORT:3306}/${MYSQL_DATABASE:speccy_db}?rewriteBatchedStatements=true&cachePrepStmts=true&useServerPrepStmts=true
+    username: ${MYSQL_USER:root}
+    password: ${MYSQL_PASSWORD:example}
+    hikari:
+      pool-name: SpeccyServerHikariPool
+  jpa:
+    hibernate:
+      ddl-auto: update
+    open-in-view: false
+    properties:
+      hibernate:
+        jdbc:
+          batch_size: 50
+        order_inserts: true
+        order_updates: true
+  jta:
+    enabled: false
+  flyway:
+    enabled: ${FLYWAY_ENABLED:true}
+    locations: ${FLYWAY_LOCATIONS:classpath:db/migration}
+    baseline-on-migrate: ${FLYWAY_BASELINE_ON_MIGRATE:true}
+    out-of-order: ${FLYWAY_OUT_OF_ORDER:true}
+
+jwt:
+  secretKey: ${JWT_SECRET_KEY:secret}
+  issuer: ${JWT_ISSUER:your-domain.com}
+  expirationMinute: ${JWT_EXPIRATION_MINUTE:10}
+
+cors:
+  enabled: ${CORS_ENABLED:true}
+  allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:3000}

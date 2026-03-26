@@ -31,6 +31,10 @@ public class TestFlow {
     @Column(name = "phase_id", nullable = false)
     private Long phaseId;
 
+    @NotNull
+    @Column(name = "created_by", nullable = false)
+    private Long createdBy;
+
     @NotBlank
     @Size(max = 500)
     @Column(name = "name", nullable = false, length = 500)
@@ -41,8 +45,9 @@ public class TestFlow {
     @Column(name = "status", nullable = false, length = 20)
     private TestFlowStatus status = TestFlowStatus.DRAFT;
 
-    public TestFlow(Long phaseId, String name) {
+    public TestFlow(Long phaseId, Long createdBy, String name) {
         this.phaseId = phaseId;
+        this.createdBy = createdBy;
         this.name = name;
     }
 

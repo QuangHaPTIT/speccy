@@ -43,6 +43,9 @@ public class TestRun {
     @Column(name = "db_connection_id", nullable = false)
     private Long dbConnectionId;
 
+    @Column(name = "test_data_profile_id")
+    private Long testDataProfileId;
+
     @NotNull
     @Convert(converter = TestRunTypeConverter.class)
     @Column(name = "run_type", nullable = false, length = 20)
@@ -76,6 +79,10 @@ public class TestRun {
     @Column(name = "failed", nullable = false)
     private Integer failed = 0;
 
+    @NotNull
+    @Column(name = "skipped", nullable = false)
+    private Integer skipped = 0;
+
     @Column(name = "started_at")
     private LocalDateTime startedAt;
 
@@ -86,6 +93,7 @@ public class TestRun {
             Long phaseId,
             Long triggeredBy,
             Long dbConnectionId,
+            Long testDataProfileId,
             TestRunType runType,
             Long refId,
             String targetUrl,
@@ -94,6 +102,7 @@ public class TestRun {
         this.phaseId = phaseId;
         this.triggeredBy = triggeredBy;
         this.dbConnectionId = dbConnectionId;
+        this.testDataProfileId = testDataProfileId;
         this.runType = runType;
         this.refId = refId;
         this.targetUrl = targetUrl;
@@ -102,6 +111,7 @@ public class TestRun {
         this.total = 0;
         this.passed = 0;
         this.failed = 0;
+        this.skipped = 0;
     }
 
     public void markRunning() {
@@ -109,27 +119,30 @@ public class TestRun {
         this.startedAt = Util.getNowUTC();
     }
 
-    public void markDone(int total, int passed, int failed) {
+    public void markDone(int total, int passed, int failed, int skipped) {
         this.status = TestRunStatus.DONE;
         this.total = total;
         this.passed = passed;
         this.failed = failed;
+        this.skipped = skipped;
         this.finishedAt = Util.getNowUTC();
     }
 
-    public void markFailed(int total, int passed, int failed) {
+    public void markFailed(int total, int passed, int failed, int skipped) {
         this.status = TestRunStatus.FAILED;
         this.total = total;
         this.passed = passed;
         this.failed = failed;
+        this.skipped = skipped;
         this.finishedAt = Util.getNowUTC();
     }
 
-    public void markTimeout(int total, int passed, int failed) {
+    public void markTimeout(int total, int passed, int failed, int skipped) {
         this.status = TestRunStatus.TIMEOUT;
         this.total = total;
         this.passed = passed;
         this.failed = failed;
+        this.skipped = skipped;
         this.finishedAt = Util.getNowUTC();
     }
 }
