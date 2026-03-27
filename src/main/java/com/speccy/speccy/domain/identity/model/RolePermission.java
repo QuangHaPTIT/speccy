@@ -1,4 +1,4 @@
-package com.speccy.speccy.domain.user.model;
+package com.speccy.speccy.domain.identity.model;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -21,12 +21,12 @@ public class RolePermission {
     @JoinColumn(name = "permission_id", nullable = false)
     private Permission permission;
 
-    public RolePermission(ProjectRole role, Permission permission) {
+    public RolePermission(Role role, Permission permission) {
         this.id = new RolePermissionId(role, permission.getId());
         this.permission = permission;
     }
 
-    public ProjectRole getRole() {
+    public Role getRole() {
         return this.id.getRole();
     }
 }

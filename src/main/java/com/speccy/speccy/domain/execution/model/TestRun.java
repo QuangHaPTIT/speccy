@@ -107,7 +107,6 @@ public class TestRun {
         this.refId = refId;
         this.targetUrl = targetUrl;
         this.profileSnapshotJson = profileSnapshotJson;
-        this.status = TestRunStatus.QUEUED;
         this.total = 0;
         this.passed = 0;
         this.failed = 0;

@@ -1,4 +1,4 @@
-package com.speccy.speccy.domain.user.model;
+package com.speccy.speccy.domain.identity.model;
 
 public enum UserStatus {
     ACTIVE,

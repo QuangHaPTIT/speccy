@@ -1,9 +1,9 @@
-package com.speccy.speccy.domain.user.persistence;
-
-import com.speccy.speccy.domain.user.model.ProjectMember;
+package com.speccy.speccy.domain.identity.persistence;
 
 import java.util.List;
 import java.util.Optional;
+
+import com.speccy.speccy.domain.identity.model.ProjectMember;
 
 public interface ProjectMemberRepository {
     void save(ProjectMember projectMember);

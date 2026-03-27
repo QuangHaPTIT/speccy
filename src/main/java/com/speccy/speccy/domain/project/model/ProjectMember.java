@@ -17,7 +17,7 @@ import lombok.Setter;
 
 import java.time.Instant;
 
-import com.speccy.speccy.domain.identity.model.ProjectRole;
+import com.speccy.speccy.domain.identity.model.Role;
 
 @Getter
 @Setter(AccessLevel.PROTECTED)
@@ -41,7 +41,7 @@ public class ProjectMember {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "role", nullable = false, length = 20)
-    private ProjectRole role;
+    private Role role;
 
     @Column(name = "invited_by")
     private Long invitedBy;
@@ -49,7 +49,7 @@ public class ProjectMember {
     @Column(name = "joined_at", nullable = false)
     private Instant joinedAt;
 
-    public ProjectMember(Long projectId, Long userId, ProjectRole role, Long invitedBy) {
+    public ProjectMember(Long projectId, Long userId, Role role, Long invitedBy) {
         this.projectId = projectId;
         this.userId = userId;
         this.role = role;
@@ -64,7 +64,7 @@ public class ProjectMember {
         }
     }
 
-    public void changeRole(ProjectRole role) {
+    public void changeRole(Role role) {
         this.role = role;
     }
 }

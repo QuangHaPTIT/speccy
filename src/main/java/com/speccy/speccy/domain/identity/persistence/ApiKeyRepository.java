@@ -1,6 +1,7 @@
-package com.speccy.speccy.domain.user.persistence;
+package com.speccy.speccy.domain.identity.persistence;
 
-import com.speccy.speccy.domain.user.model.ApiKey;
+
+import com.speccy.speccy.domain.identity.model.ApiKey;
 
 import java.util.List;
 import java.util.Optional;

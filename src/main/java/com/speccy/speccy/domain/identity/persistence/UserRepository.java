@@ -1,6 +1,6 @@
-package com.speccy.speccy.domain.user.persistence;
+package com.speccy.speccy.domain.identity.persistence;
 
-import com.speccy.speccy.domain.user.model.User;
+import com.speccy.speccy.domain.identity.model.User;
 
 import java.util.Optional;
 

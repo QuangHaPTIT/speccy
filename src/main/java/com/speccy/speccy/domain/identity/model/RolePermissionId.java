@@ -1,4 +1,4 @@
-package com.speccy.speccy.domain.user.model;
+package com.speccy.speccy.domain.identity.model;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
@@ -20,7 +20,7 @@ public class RolePermissionId implements Serializable {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "role", nullable = false, length = 20)
-    private ProjectRole role;
+    private Role role;
 
     @Column(name = "permission_id", nullable = false)
     private Long permissionId;

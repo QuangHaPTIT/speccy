@@ -1,14 +1,15 @@
-package com.speccy.speccy.domain.user.persistence;
+package com.speccy.speccy.domain.identity.persistence;
 
-import com.speccy.speccy.domain.user.model.ProjectRole;
-import com.speccy.speccy.domain.user.model.RolePermission;
+
+import com.speccy.speccy.domain.identity.model.Role;
+import com.speccy.speccy.domain.identity.model.RolePermission;
 
 import java.util.List;
 
 public interface RolePermissionRepository {
     void save(RolePermission rolePermission);
 
-    void deleteByRoleAndPermissionId(ProjectRole role, Long permissionId);
+    void deleteByRoleAndPermissionId(Role role, Long permissionId);
 
-    List<RolePermission> findByRole(ProjectRole role);
+    List<RolePermission> findByRole(Role role);
 }

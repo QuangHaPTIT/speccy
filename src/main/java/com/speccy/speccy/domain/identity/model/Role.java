@@ -1,6 +1,6 @@
 package com.speccy.speccy.domain.identity.model;
 
-public enum ProjectRole {
+public enum Role {
     OWNER,
     ADMIN,
     DEVELOPER,

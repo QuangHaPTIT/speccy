@@ -1,4 +1,4 @@
-package com.speccy.speccy.domain.user.model;
+package com.speccy.speccy.domain.identity.model;
 
 import com.speccy.speccy.domain.shared.AuditableAggregateRoot;
 import jakarta.persistence.*;
