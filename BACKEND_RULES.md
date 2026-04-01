@@ -15,15 +15,20 @@ Các quyết định dưới đây được xem là source of truth cho backend:
 
 1. Test case draft status dùng duy nhất `DRAFT`.
 2. Dữ liệu OpenAPI dùng naming trung tính:
+   - `structuredSpecJson` (JSON có cấu trúc, input chính cho AI)
    - `openapiContent` (nội dung raw)
    - `openapiFormat` (`JSON` | `YAML`)
    - Không dùng song song nhiều cặp tên kiểu `openapiJson/openapiPrevJson/openapiYaml`.
 3. Gemini Call #1 (raw spec -> openapi) là optional, đặt sau feature flag và mặc định `OFF` ở MVP.
-4. `POST /api/v1/runs` phải idempotent theo `Idempotency-Key` header (tối thiểu trong khoảng thời gian TTL cấu hình).
+4. `POST /api/v1/runs` phải idempotent theo `Idempotency-Key` header (tối thiểu trong khoảng thời gian TTL cấu hình), và phải persist ở DB (`test_runs.idempotency_key`, unique index).
 5. DB teardown policy:
    - Chỉ cho phép lệnh an toàn trong môi trường test.
    - Cấm tuyệt đối lệnh phá hủy schema (`DROP`, `ALTER`, `TRUNCATE`).
    - `DELETE` chỉ hợp lệ khi có `WHERE` rõ ràng và whitelist bảng được phép.
+6. Phân tách role model:
+   - `roles` + `user_roles`: platform-level role (quyền hệ thống).
+   - `project_members.role`: project-level role (quyền trong project).
+   - Không trộn 2 scope khi check authz.
 
 ## 3) Kiến trúc bắt buộc
 
@@ -91,6 +96,7 @@ Không được để controller gọi trực tiếp repository hoặc viết bu
 - Endpoint public phải khai báo tường minh trong `SecurityConfig`.
 - Các thao tác theo project bắt buộc check role theo `projectId` bằng method security.
 - JWT chỉ chứa thông tin platform-level; role theo project luôn tra DB runtime.
+- Không dùng `roles/user_roles` để thay thế `project_members.role` trong phân quyền theo project.
 - Không log token, password, secret key, thông tin kết nối DB dạng plaintext.
 
 ### 4.6 Logging và observability

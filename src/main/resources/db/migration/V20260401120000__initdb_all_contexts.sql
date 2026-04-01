@@ -131,7 +131,9 @@ CREATE TABLE IF NOT EXISTS specs (
     created_by BIGINT NOT NULL,
     title VARCHAR(500) NOT NULL,
     raw_content LONGTEXT NULL,
-    openapi_yaml LONGTEXT NULL,
+    structured_spec_json LONGTEXT NULL,
+    openapi_content LONGTEXT NULL,
+    openapi_format VARCHAR(10) NULL,
     phase_context_snapshot LONGTEXT NULL,
     impact_analysis_json LONGTEXT NULL,
     parse_status VARCHAR(20) NOT NULL,
@@ -318,6 +320,7 @@ CREATE TABLE IF NOT EXISTS test_runs (
     ref_id BIGINT NULL,
     target_url VARCHAR(500) NOT NULL,
     profile_snapshot_json LONGTEXT NULL,
+    idempotency_key VARCHAR(128) NULL,
     status VARCHAR(20) NOT NULL,
     total INT NOT NULL,
     passed INT NOT NULL,
@@ -330,6 +333,7 @@ CREATE TABLE IF NOT EXISTS test_runs (
     KEY idx_test_runs_triggered_by (triggered_by),
     KEY idx_test_runs_db_connection_id (db_connection_id),
     KEY idx_test_runs_test_data_profile_id (test_data_profile_id),
+    UNIQUE KEY uq_test_runs_idempotency_key (idempotency_key),
     CONSTRAINT fk_test_runs_phase
         FOREIGN KEY (phase_id) REFERENCES phases(id)
         ON DELETE CASCADE,

@@ -13,13 +13,15 @@ Last updated: 2026-04-01
 - Có roadmap theo giai đoạn MVP -> v1.0 -> v1.5.
 
 Cần chốt lại trước khi code mạnh (để tránh rework):
-- Inconsistency 1: `openapiJson/openapiPrevJson` vs `openapiYaml` (đang có cả 2 cách đặt tên trong spec).
+- Inconsistency 1: `openapi_yaml` vs contract mới `openapi_content` + `openapi_format`.
+- Inconsistency 1.1: thiếu `structured_spec_json` (raw text và structured input chưa tách rõ).
 - Inconsistency 2: trạng thái draft test case lúc ghi `PENDING`, lúc ghi `DRAFT`.
 - Inconsistency 3: Security section nói hạn chế `DELETE` cho teardown query, nhưng example lại dùng `DELETE`.
 - Inconsistency 4: Gemini Call #1 được mô tả trong luồng chính, nhưng roadmap lại đẩy xuống v1.5.
 - Clarification 1: Quy ước response envelope cho API (có dùng chung format hay trả payload trực tiếp).
 - Clarification 2: Quy tắc pagination/filter/sort cho list endpoints.
 - Clarification 3: Chiến lược idempotency cho endpoint `POST /api/v1/runs`.
+- Clarification 4: Scope role — `roles/user_roles` (platform-level) vs `project_members.role` (project-level).
 
 Khuyến nghị: đóng băng các quyết định trên trong 1 file ADR nhỏ trước khi implement endpoint.
 
@@ -43,12 +45,13 @@ Mục tiêu: tạo đường dây MVP chạy được từ đầu đến cuối 
 
 ### P0 - Alignment and architecture guardrails (1-2 ngày)
 
-- [ ] T001 - Chốt naming contract cho Spec fields (`openapi_json` hay `openapi_yaml`) và cập nhật thống nhất toàn codebase.
+- [ ] T001 - Chốt naming contract cho Spec fields (`structured_spec_json`, `openapi_content`, `openapi_format`) và cập nhật thống nhất toàn codebase.
 - [ ] T002 - Chốt duy nhất 1 lifecycle cho test case draft (`DRAFT`), bỏ `PENDING` khỏi docs và payload.
 - [ ] T003 - Chốt SQL safety policy cho `dbTeardownQuery` (có cho `DELETE` hay không).
 - [ ] T004 - Tạo ADR cho Gemini Call #1 (MVP có hay không), ghi rõ feature flag.
 - [ ] T005 - Chốt API response envelope (success/error), error code naming convention.
 - [ ] T006 - Tạo checklist Definition of Done cho mỗi endpoint (validation, authz, log, test).
+- [ ] T007 - Chốt role model: platform role (`roles/user_roles`) và project role (`project_members.role`) + quy tắc dùng trong Security.
 
 Deliverable P0:
 - ADR docs + convention docs được commit.
@@ -74,6 +77,7 @@ Deliverable P1:
 - [ ] T204 - Lưu snapshot context (`phase_context_snapshot`) cho audit.
 - [ ] T205 - Thêm validation khi OpenAPI không hợp lệ (message rõ để debug).
 - [ ] T206 - Integration test: upload openapi -> parse modules -> diff output.
+- [ ] T207 - Khi tạo phase mới, copy `accumulated_rules` từ phase trước (nếu có) để giữ context liên tục.
 
 Deliverable P2:
 - Có thể upload spec/openapi và nhận được danh sách API module + diff result.
@@ -101,6 +105,7 @@ Deliverable P3:
 - [ ] T405 - Persist `TestResult` cho từng case, aggregate vào `TestRun`.
 - [ ] T406 - Implement `GET /api/v1/runs/{id}` + `/results` + lịch sử run theo phase.
 - [ ] T407 - Integration test run happy path + fail path.
+- [ ] T408 - Persist `idempotency_key` (unique) cho `POST /api/v1/runs` + cleanup job theo TTL.
 
 Deliverable P4:
 - Có thể trigger run và xem kết quả pass/fail cho test case.

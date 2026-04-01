@@ -62,6 +62,10 @@ public class TestRun {
     @Column(name = "profile_snapshot_json", columnDefinition = "LONGTEXT")
     private String profileSnapshotJson;
 
+    @Size(max = 128)
+    @Column(name = "idempotency_key", length = 128)
+    private String idempotencyKey;
+
     @NotNull
     @Convert(converter = TestRunStatusConverter.class)
     @Column(name = "status", nullable = false, length = 20)
@@ -97,7 +101,8 @@ public class TestRun {
             TestRunType runType,
             Long refId,
             String targetUrl,
-            String profileSnapshotJson
+            String profileSnapshotJson,
+            String idempotencyKey
     ) {
         this.phaseId = phaseId;
         this.triggeredBy = triggeredBy;
@@ -107,6 +112,7 @@ public class TestRun {
         this.refId = refId;
         this.targetUrl = targetUrl;
         this.profileSnapshotJson = profileSnapshotJson;
+        this.idempotencyKey = idempotencyKey;
         this.total = 0;
         this.passed = 0;
         this.failed = 0;

@@ -39,10 +39,17 @@ public class Spec extends AuditableAggregateRoot<Spec> {
     @Column(name = "raw_content", columnDefinition = "LONGTEXT")
     private String rawContent;
 
-    // OpenAPI 3.0 YAML do Gemini sinh ra sau khi parse raw_content.
-    // Sau khi có field này, ApiModule mới được tạo từ đây.
-    @Column(name = "openapi_yaml", columnDefinition = "LONGTEXT")
-    private String openapiYaml;
+    // Structured spec JSON dùng làm input chính cho Gemini.
+    @Column(name = "structured_spec_json", columnDefinition = "LONGTEXT")
+    private String structuredSpecJson;
+
+    // OpenAPI content do hệ thống tạo/lưu trữ sau parse.
+    @Column(name = "openapi_content", columnDefinition = "LONGTEXT")
+    private String openapiContent;
+
+    // Định dạng openapi_content: JSON hoặc YAML.
+    @Column(name = "openapi_format", length = 10)
+    private String openapiFormat;
 
     // Snapshot context từ các phase trước (để audit/debug khi gen test)
     @Column(name = "phase_context_snapshot", columnDefinition = "LONGTEXT")
@@ -83,8 +90,13 @@ public class Spec extends AuditableAggregateRoot<Spec> {
         this.parseStatus = SpecParseStatus.PROCESSING;
     }
 
-    public void markDone(String openapiYaml, Integer geminiTokensUsed) {
-        this.openapiYaml = openapiYaml;
+    public void updateStructuredSpec(String structuredSpecJson) {
+        this.structuredSpecJson = structuredSpecJson;
+    }
+
+    public void markDone(String openapiContent, String openapiFormat, Integer geminiTokensUsed) {
+        this.openapiContent = openapiContent;
+        this.openapiFormat = openapiFormat;
         this.geminiTokensUsed = geminiTokensUsed;
         this.parseStatus = SpecParseStatus.DONE;
         this.parseError = null;
@@ -97,6 +109,7 @@ public class Spec extends AuditableAggregateRoot<Spec> {
 
     public boolean isReadyForTestGen() {
         return this.parseStatus == SpecParseStatus.DONE
-                && this.openapiYaml != null;
+                && this.openapiContent != null
+                && this.openapiFormat != null;
     }
 }
