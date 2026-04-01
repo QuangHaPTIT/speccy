@@ -10,6 +10,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.HashSet;
+import java.util.Set;
+
 @Getter
 @Setter(AccessLevel.PROTECTED)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -20,6 +23,11 @@ public class User extends AuditableAggregateRoot<User> {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @NotBlank
+    @Size(max = 255)
+    @Column(name = "username", nullable = false, unique = true, length = 255)
+    private String username;
 
     @Email
     @NotBlank
@@ -52,7 +60,13 @@ public class User extends AuditableAggregateRoot<User> {
     @Column(name = "status", nullable = false, length = 20)
     private UserStatus status = UserStatus.ACTIVE;
 
-    public User(String email, String passwordHash, String fullName) {
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id"))
+    private Set<Role> roles = new HashSet<>();
+
+    public User(String username, String email, String passwordHash, String fullName) {
+        this.username = username;
         this.email = email;
         this.passwordHash = passwordHash;
         this.fullName = fullName;
@@ -63,6 +77,10 @@ public class User extends AuditableAggregateRoot<User> {
         this.avatarUrl = avatarUrl;
     }
 
+    public void changeEmail(String email) {
+        this.email = email;
+    }
+
     public void linkOAuth(AuthProvider provider, String providerId) {
         this.provider = provider;
         this.providerId = providerId;
@@ -70,6 +88,12 @@ public class User extends AuditableAggregateRoot<User> {
 
     public void changePassword(String passwordHash) {
         this.passwordHash = passwordHash;
+    }
+
+    public void addRole(Role role) {
+        if (role != null) {
+            this.roles.add(role);
+        }
     }
 
     public void suspend() {

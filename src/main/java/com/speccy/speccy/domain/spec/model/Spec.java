@@ -69,7 +69,6 @@ public class Spec extends AuditableAggregateRoot<Spec> {
         this.createdBy = createdBy;
         this.title = title;
         this.rawContent = rawContent;
-        this.parseStatus = SpecParseStatus.PENDING;
     }
 
     public void updateContent(String title, String rawContent) {

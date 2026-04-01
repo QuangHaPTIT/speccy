@@ -6,11 +6,17 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler;
+import org.springframework.security.access.expression.method.MethodSecurityExpressionHandler;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.CsrfConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
@@ -21,6 +27,8 @@ import java.util.Collections;
 import java.util.List;
 
 @Configuration
+@EnableWebSecurity
+@EnableMethodSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
     @Value("${cors.allowed-origins}")
@@ -37,20 +45,35 @@ public class SecurityConfig {
 
     };
 
-    private static final String[] COMMAND_PUBLIC_URLS = {
+        private static final String[] COMMAND_PUBLIC_URLS = {
+                        "/api/v1/auth/register",
+                        "/api/v1/auth/login",
+                        "/api/v1/auth/refresh"
+        };
 
-    };
+        private static final String[] SYNC_URLS = {"/api/sync/**"};
 
-    private static final String[] SYNC_URLS = {"/api/sync/**"};
-
-//    private final JwtAuthenticationFilter jwtAuthenticationFilter;
-//    private final JwtAuthenticationEntryPoint unauthorizedHandler;
+        private final CustomAuthenticationFilter customAuthenticationFilter;
+        private final JwtAuthenticationEntryPoint unauthorizedHandler;
 
     @Bean
     public AuthenticationManager authenticationManager(
             AuthenticationConfiguration authenticationConfiguration) {
         return authenticationConfiguration.getAuthenticationManager();
     }
+
+        @Bean
+        public PasswordEncoder passwordEncoder() {
+                return new BCryptPasswordEncoder();
+        }
+
+        @Bean
+        public MethodSecurityExpressionHandler expressionHandler() {
+                DefaultMethodSecurityExpressionHandler expressionHandler =
+                                new DefaultMethodSecurityExpressionHandler();
+                expressionHandler.setPermissionEvaluator(new CustomPermissionEvaluator());
+                return expressionHandler;
+        }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -59,8 +82,8 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .sessionManagement(
                         session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-//                .exceptionHandling(
-//                        exception -> exception.authenticationEntryPoint(unauthorizedHandler))
+                .exceptionHandling(
+                        exception -> exception.authenticationEntryPoint(unauthorizedHandler))
                 .authorizeHttpRequests(
                         auth ->
                                 auth.requestMatchers(HttpMethod.OPTIONS, "/**")
@@ -74,7 +97,10 @@ public class SecurityConfig {
                                         .requestMatchers(SYNC_URLS)
                                         .permitAll()
                                         .anyRequest()
-                                        .permitAll())
+                                        .authenticated())
+                .addFilterBefore(
+                        customAuthenticationFilter,
+                        UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
 
@@ -89,7 +115,7 @@ public class SecurityConfig {
         config.setAllowedMethods(Collections.singletonList(CorsConfiguration.ALL));
         config.setAllowedHeaders(Collections.singletonList(CorsConfiguration.ALL));
         config.setAllowCredentials(true);
-        config.setExposedHeaders(List.of(HttpHeaders.CONTENT_DISPOSITION));
+        config.setExposedHeaders(List.of(HttpHeaders.AUTHORIZATION, HttpHeaders.CONTENT_DISPOSITION));
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);

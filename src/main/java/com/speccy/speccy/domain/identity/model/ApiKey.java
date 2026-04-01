@@ -56,7 +56,7 @@ public class ApiKey extends AuditableAggregateRoot<ApiKey> {
     @NotNull
     @Enumerated(EnumType.STRING)
     @Column(name = "role", nullable = false, length = 20)
-    private Role role = Role.DEVELOPER;
+    private ProjectRole role = ProjectRole.DEVELOPER;
 
     @Column(name = "last_used_at")
     private LocalDateTime lastUsedAt;
@@ -64,13 +64,13 @@ public class ApiKey extends AuditableAggregateRoot<ApiKey> {
     @Column(name = "expires_at")
     private LocalDateTime expiresAt;
 
-    public ApiKey(Long userId, Long projectId, String name, String keyHash, String keyPrefix, Role role, LocalDateTime expiresAt) {
+    public ApiKey(Long userId, Long projectId, String name, String keyHash, String keyPrefix, ProjectRole role, LocalDateTime expiresAt) {
         this.userId = userId;
         this.projectId = projectId;
         this.name = name;
         this.keyHash = keyHash;
         this.keyPrefix = keyPrefix;
-        this.role = role == null ? Role.DEVELOPER : role;
+        this.role = role == null ? ProjectRole.DEVELOPER : role;
         this.expiresAt = expiresAt;
     }
 

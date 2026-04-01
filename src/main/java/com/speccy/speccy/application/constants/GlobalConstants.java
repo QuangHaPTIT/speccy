@@ -14,6 +14,8 @@ public final class GlobalConstants {
     public static final Locale ENGLISH_LOCALE =
             new Locale.Builder().setLanguage("en").setRegion("US").build();
 
+    public static final String PREFIX_ROLE = "ROLE_";
+    public static final String PREFIX_TOKEN = "Bearer ";
 
     private GlobalConstants() {
     }
