@@ -12,5 +12,7 @@ public interface ProjectRepository {
 
     List<Project> findByOwnerId(Long ownerId);
 
+    List<Project> findAccessibleByUserId(Long userId);
+
     void deleteById(Long id);
 }

@@ -1,7 +1,6 @@
 package com.speccy.speccy.domain.shared;
 
 import com.speccy.ddd.AggregateRoot;
-import com.speccy.speccy.application.utils.Util;
 import jakarta.persistence.Column;
 import jakarta.persistence.MappedSuperclass;
 import jakarta.persistence.PrePersist;
@@ -25,12 +24,12 @@ public abstract class AuditableAggregateRoot<R extends AggregateRoot<R>> extends
 
     @PrePersist
     protected void onCreate() {
-        this.createdAt = Util.getNowUTC();
-        this.updatedAt = Util.getNowUTC();
+        this.createdAt = DomainTime.nowUtc();
+        this.updatedAt = DomainTime.nowUtc();
     }
 
     @PreUpdate
     protected void onUpdate() {
-        this.updatedAt = Util.getNowUTC();
+        this.updatedAt = DomainTime.nowUtc();
     }
 }

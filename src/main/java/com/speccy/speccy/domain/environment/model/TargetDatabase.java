@@ -1,10 +1,8 @@
 package com.speccy.speccy.domain.environment.model;
 
-import com.speccy.speccy.application.converter.TargetDatabaseStatusConverter;
-import com.speccy.speccy.application.utils.Util;
 import com.speccy.speccy.domain.shared.AuditableAggregateRoot;
+import com.speccy.speccy.domain.shared.DomainTime;
 import jakarta.persistence.Column;
-import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -76,7 +74,7 @@ public class TargetDatabase extends AuditableAggregateRoot<TargetDatabase> {
     private String passwordEnc;
 
     @NotNull
-    @Convert(converter = TargetDatabaseStatusConverter.class)
+    @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false, length = 20)
     private TargetDatabaseStatus status = TargetDatabaseStatus.UNTESTED;
 
@@ -123,7 +121,7 @@ public class TargetDatabase extends AuditableAggregateRoot<TargetDatabase> {
 
     public void markActive() {
         this.status = TargetDatabaseStatus.ACTIVE;
-        this.lastTestedAt = Util.getNowUTC();
+        this.lastTestedAt = DomainTime.nowUtc();
     }
 
     public void markUnreachable() {

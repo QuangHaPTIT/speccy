@@ -1,9 +1,9 @@
 package com.speccy.speccy.domain.testmanagement.model;
 
-import com.speccy.speccy.application.converter.TestFlowStatusConverter;
 import jakarta.persistence.Column;
-import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -41,7 +41,7 @@ public class TestFlow {
     private String name;
 
     @NotNull
-    @Convert(converter = TestFlowStatusConverter.class)
+    @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false, length = 20)
     private TestFlowStatus status = TestFlowStatus.DRAFT;
 

@@ -1,11 +1,10 @@
 package com.speccy.speccy.domain.execution.model;
 
-import com.speccy.speccy.application.converter.TestRunStatusConverter;
-import com.speccy.speccy.application.converter.TestRunTypeConverter;
-import com.speccy.speccy.application.utils.Util;
+import com.speccy.speccy.domain.shared.DomainTime;
 import jakarta.persistence.Column;
-import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -47,7 +46,7 @@ public class TestRun {
     private Long testDataProfileId;
 
     @NotNull
-    @Convert(converter = TestRunTypeConverter.class)
+    @Enumerated(EnumType.STRING)
     @Column(name = "run_type", nullable = false, length = 20)
     private TestRunType runType;
 
@@ -67,7 +66,7 @@ public class TestRun {
     private String idempotencyKey;
 
     @NotNull
-    @Convert(converter = TestRunStatusConverter.class)
+    @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false, length = 20)
     private TestRunStatus status = TestRunStatus.QUEUED;
 
@@ -121,7 +120,7 @@ public class TestRun {
 
     public void markRunning() {
         this.status = TestRunStatus.RUNNING;
-        this.startedAt = Util.getNowUTC();
+        this.startedAt = DomainTime.nowUtc();
     }
 
     public void markDone(int total, int passed, int failed, int skipped) {
@@ -130,7 +129,7 @@ public class TestRun {
         this.passed = passed;
         this.failed = failed;
         this.skipped = skipped;
-        this.finishedAt = Util.getNowUTC();
+        this.finishedAt = DomainTime.nowUtc();
     }
 
     public void markFailed(int total, int passed, int failed, int skipped) {
@@ -139,7 +138,7 @@ public class TestRun {
         this.passed = passed;
         this.failed = failed;
         this.skipped = skipped;
-        this.finishedAt = Util.getNowUTC();
+        this.finishedAt = DomainTime.nowUtc();
     }
 
     public void markTimeout(int total, int passed, int failed, int skipped) {
@@ -148,6 +147,6 @@ public class TestRun {
         this.passed = passed;
         this.failed = failed;
         this.skipped = skipped;
-        this.finishedAt = Util.getNowUTC();
+        this.finishedAt = DomainTime.nowUtc();
     }
 }

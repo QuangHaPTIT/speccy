@@ -12,5 +12,7 @@ public interface ProjectMemberRepository {
 
     List<ProjectMember> findByProjectId(Long projectId);
 
+    List<ProjectMember> findByUserId(Long userId);
+
     void deleteByProjectIdAndUserId(Long projectId, Long userId);
 }

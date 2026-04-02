@@ -1,4 +1,4 @@
-package com.speccy.speccy.application.service.user.impl;
+package com.speccy.speccy.application.service.identity.impl;
 
 import com.speccy.speccy.application.exception.ConstraintViolationException;
 import com.speccy.speccy.application.exception.ErrorCode;
@@ -25,7 +25,7 @@ import java.util.Objects;
 @Service
 @RequiredArgsConstructor
 @Transactional
-public class AuthWriteService implements com.speccy.speccy.application.service.user.AuthWriteService {
+public class AuthWriteService implements com.speccy.speccy.application.service.identity.AuthWriteService {
 
 	private final UserRepository userRepository;
 	private final RoleRepository roleRepository;

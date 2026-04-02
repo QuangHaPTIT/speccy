@@ -1,7 +1,8 @@
-package com.speccy.speccy.infrastructure.configuration.security;
+package com.speccy.speccy.application.utils;
 
 import com.speccy.speccy.application.exception.ConstraintViolationException;
 import com.speccy.speccy.application.exception.ErrorCode;
+import com.speccy.speccy.infrastructure.configuration.security.CustomUserAuthentication;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 

@@ -60,6 +60,7 @@ public class Phase extends AuditableAggregateRoot<Phase> {
     public Phase(Long projectId, Long createdBy, String name, String description,
                  LocalDate startDate, LocalDate endDate,
                  Integer orderIndex, String accumulatedRules) {
+        validateDateRange(startDate, endDate);
         this.projectId = projectId;
         this.createdBy = createdBy;
         this.name = name;
@@ -68,11 +69,12 @@ public class Phase extends AuditableAggregateRoot<Phase> {
         this.endDate = endDate;
         this.orderIndex = orderIndex;
         this.accumulatedRules = accumulatedRules;
-        this.status = PhaseStatus.PLANNING;
     }
 
     public void updateInfo(String name, String description,
                            LocalDate startDate, LocalDate endDate) {
+        ensureEditable("Phase is not editable");
+        validateDateRange(startDate, endDate);
         this.name = name;
         this.description = description;
         this.startDate = startDate;
@@ -84,23 +86,45 @@ public class Phase extends AuditableAggregateRoot<Phase> {
     }
 
     public void activate() {
+        if (this.status != PhaseStatus.PLANNING) {
+            throw new IllegalStateException("Only planning phase can be activated");
+        }
         this.status = PhaseStatus.ACTIVE;
     }
 
     public void complete() {
+        if (this.status != PhaseStatus.ACTIVE) {
+            throw new IllegalStateException("Only active phase can be completed");
+        }
         this.status = PhaseStatus.COMPLETED;
     }
 
     public void cancel() {
+        ensureEditable("Only planning or active phase can be cancelled");
         this.status = PhaseStatus.CANCELLED;
     }
 
     public void reorder(Integer orderIndex) {
+        ensureEditable("Phase is not editable");
+        if (orderIndex == null || orderIndex <= 0) {
+            throw new IllegalArgumentException("Order index must be positive");
+        }
         this.orderIndex = orderIndex;
     }
 
     public boolean isEditable() {
-        return this.status == PhaseStatus.PLANNING
-                || this.status == PhaseStatus.ACTIVE;
+        return this.status == PhaseStatus.PLANNING || this.status == PhaseStatus.ACTIVE;
+    }
+
+    private void ensureEditable(String message) {
+        if (!isEditable()) {
+            throw new IllegalStateException(message);
+        }
+    }
+
+    private void validateDateRange(LocalDate startDate, LocalDate endDate) {
+        if (startDate != null && endDate != null && endDate.isBefore(startDate)) {
+            throw new IllegalArgumentException("End date must be after or equal to start date");
+        }
     }
 }

@@ -1,4 +1,4 @@
-package com.speccy.speccy.application.service.user;
+package com.speccy.speccy.application.service.identity;
 
 import com.speccy.speccy.application.model.auth.request.AuthRequest;
 import com.speccy.speccy.application.model.auth.request.UserRequest;

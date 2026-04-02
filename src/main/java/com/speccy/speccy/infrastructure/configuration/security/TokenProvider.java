@@ -6,6 +6,7 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.Claim;
 import com.auth0.jwt.interfaces.DecodedJWT;
+import com.speccy.speccy.application.constants.JwtConstants;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -13,6 +14,8 @@ import java.time.Instant;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+
+import static com.speccy.speccy.application.constants.JwtConstants.TYPE_CLAIM;
 
 @Component
 public class TokenProvider {
@@ -37,13 +40,14 @@ public class TokenProvider {
             List<String> roles) {
 
         Instant now = Instant.now();
-        Instant expiresAt = now.plusSeconds(expirationMinute * 60);
+        Instant expiresAt = now.plusSeconds(expirationMinute * 60); //TODO: Move env
 
         var jwtBuilder = JWT.create()
                 .withIssuer(issuer)
                 .withSubject(String.valueOf(userId))
-            .withClaim("username", username)
-                .withClaim("email", email)
+                .withClaim(JwtConstants.USERNAME_CLAIM, username)
+                .withClaim(JwtConstants.EMAIL_CLAIM, email)
+                .withClaim(TYPE_CLAIM, JwtConstants.ACCESS_TOKEN_TYPE)
                 .withIssuedAt(Date.from(now))
                 .withExpiresAt(Date.from(expiresAt));
 
@@ -56,14 +60,14 @@ public class TokenProvider {
 
     public String buildRefreshToken(Long userId, String username, String email) {
         Instant now = Instant.now();
-        Instant expiresAt = now.plusSeconds(expirationMinute * 60 * 24L * 7);
+        Instant expiresAt = now.plusSeconds(expirationMinute * 60 * 24L * 7); //TODO: Move env
 
         return JWT.create()
                 .withIssuer(issuer)
                 .withSubject(String.valueOf(userId))
-                .withClaim("username", username)
-                .withClaim("email", email)
-                .withClaim("typ", "refresh")
+                .withClaim(JwtConstants.USERNAME_CLAIM, username)
+                .withClaim(JwtConstants.EMAIL_CLAIM, email)
+                .withClaim(TYPE_CLAIM, JwtConstants.REFRESH_TOKEN_TYPE)
                 .withIssuedAt(Date.from(now))
                 .withExpiresAt(Date.from(expiresAt))
                 .sign(algorithm());
@@ -88,7 +92,7 @@ public class TokenProvider {
 
     public String extractEmail(String token) {
         try {
-            return verify(token).getClaim("email").asString();
+            return verify(token).getClaim(JwtConstants.EMAIL_CLAIM).asString();
         } catch (Exception ex) {
             return null;
         }
@@ -96,7 +100,7 @@ public class TokenProvider {
 
     public String extractUsername(String token) {
         try {
-            return verify(token).getClaim("username").asString();
+            return verify(token).getClaim(JwtConstants.USERNAME_CLAIM).asString();
         } catch (Exception ex) {
             return null;
         }
@@ -120,6 +124,10 @@ public class TokenProvider {
 
     public List<String> extractRoles(String token) {
         return extractArrayClaim(token, "roles");
+    }
+
+    public String extractTokenType(String token) {
+        return extractArrayClaim(token, TYPE_CLAIM).getFirst();
     }
 
     private List<String> extractArrayClaim(String token, String claimName) {

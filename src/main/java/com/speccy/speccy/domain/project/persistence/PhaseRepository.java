@@ -10,7 +10,11 @@ public interface PhaseRepository {
 
     Optional<Phase> findById(Long id);
 
+    Optional<Phase> findByIdAndProjectId(Long id, Long projectId);
+
     List<Phase> findByProjectIdOrderByOrderIndex(Long projectId);
+
+    Optional<Phase> findTopByProjectIdOrderByOrderIndexDesc(Long projectId);
 
     void deleteById(Long id);
 }

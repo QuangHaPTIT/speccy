@@ -1,14 +1,10 @@
 package com.speccy.speccy.domain.testmanagement.model;
 
-import com.speccy.speccy.application.converter.TestCaseAuthTypeConverter;
-import com.speccy.speccy.application.converter.TestCaseCategoryConverter;
-import com.speccy.speccy.application.converter.TestCaseMatchModeConverter;
-import com.speccy.speccy.application.converter.TestCaseSourceConverter;
-import com.speccy.speccy.application.converter.TestCaseStatusConverter;
 import com.speccy.speccy.domain.shared.AuditableAggregateRoot;
 import jakarta.persistence.Column;
-import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -45,17 +41,17 @@ public class TestCase extends AuditableAggregateRoot<TestCase> {
     private Long createdBy;
 
     @NotNull
-    @Convert(converter = TestCaseSourceConverter.class)
+    @Enumerated(EnumType.STRING)
     @Column(name = "source", nullable = false, length = 20)
     private TestCaseSource source = TestCaseSource.MANUAL;
 
     @NotNull
-    @Convert(converter = TestCaseStatusConverter.class)
+    @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false, length = 20)
     private TestCaseStatus status = TestCaseStatus.DRAFT;
 
     @NotNull
-    @Convert(converter = TestCaseCategoryConverter.class)
+    @Enumerated(EnumType.STRING)
     @Column(name = "test_category", nullable = false, length = 30)
     private TestCategory testCategory = TestCategory.HAPPY_PATH;
 
@@ -78,7 +74,7 @@ public class TestCase extends AuditableAggregateRoot<TestCase> {
     private String endpoint;
 
     @NotNull
-    @Convert(converter = TestCaseAuthTypeConverter.class)
+    @Enumerated(EnumType.STRING)
     @Column(name = "auth_type", nullable = false, length = 20)
     private TestCaseAuthType authType = TestCaseAuthType.NONE;
 
@@ -116,7 +112,7 @@ public class TestCase extends AuditableAggregateRoot<TestCase> {
     private String expectedResponseJson;
 
     @NotNull
-    @Convert(converter = TestCaseMatchModeConverter.class)
+    @Enumerated(EnumType.STRING)
     @Column(name = "match_mode", nullable = false, length = 20)
     private TestCaseMatchMode matchMode = TestCaseMatchMode.PARTIAL;
 

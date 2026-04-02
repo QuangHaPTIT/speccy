@@ -45,23 +45,45 @@ public class Project extends AuditableAggregateRoot<Project> {
     }
 
     public void updateInfo(String name, String description) {
+        assertMutable();
         this.name = name;
         this.description = description;
     }
 
     public void archive() {
+        if (this.status == ProjectStatus.DELETED) {
+            throw new IllegalStateException("Deleted project cannot be archived");
+        }
+        if (this.status == ProjectStatus.ARCHIVED) {
+            throw new IllegalStateException("Project is already archived");
+        }
         this.status = ProjectStatus.ARCHIVED;
     }
 
     public void activate() {
+        if (this.status == ProjectStatus.DELETED) {
+            throw new IllegalStateException("Deleted project cannot be activated");
+        }
+        if (this.status != ProjectStatus.ARCHIVED) {
+            throw new IllegalStateException("Only archived project can be activated");
+        }
         this.status = ProjectStatus.ACTIVE;
     }
 
     public void softDelete() {
+        if (this.status == ProjectStatus.DELETED) {
+            throw new IllegalStateException("Project is already deleted");
+        }
         this.status = ProjectStatus.DELETED;
     }
 
     public boolean isOwner(Long userId) {
         return this.ownerId.equals(userId);
+    }
+
+    private void assertMutable() {
+        if (this.status == ProjectStatus.ARCHIVED || this.status == ProjectStatus.DELETED) {
+            throw new IllegalStateException("Cannot update archived or deleted project");
+        }
     }
 }

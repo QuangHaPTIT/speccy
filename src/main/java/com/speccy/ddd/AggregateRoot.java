@@ -24,10 +24,12 @@ public abstract class AggregateRoot<R extends AggregateRoot<R>> extends DomainEn
             }
             return;
         }
+
         if (log.isDebugEnabled()) {
             log.debug("Clearing DomainEvent");
-            this.events.clear();
         }
+
+        this.events.clear();
     }
 
     public List<DomainEvent> getDomainEvents() {
